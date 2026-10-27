@@ -73,6 +73,7 @@ Vercel tidak menyediakan runtime PHP resmi. Proyek ini menggunakan runtime PHP k
 
 1. Hubungkan repository `bosveall/pelindo-aset` ke Vercel dan pilih Framework Preset **Other**.
 2. Buat database PostgreSQL di Neon Free. Salin connection string pooled dari dashboard Neon, lalu tambahkan ke project Vercel sebagai `DATABASE_URL` untuk Production dan Preview.
+   - Untuk koneksi Neon, konfigurasi menambahkan endpoint ID agar kompatibel dengan runtime PHP yang belum mendukung SNI. Jika connection string tidak menentukan `sslmode` dan `DB_SSLMODE` tidak diatur, koneksi menggunakan `verify-full`.
 3. Tambahkan environment variables:
    - `APP_KEY`: hasil `php artisan key:generate --show` dari komputer lokal.
    - `APP_URL`: URL HTTPS project, misalnya `https://pelindo-aset-demo.vercel.app`.
