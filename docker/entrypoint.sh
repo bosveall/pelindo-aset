@@ -26,6 +26,6 @@ fi
 chown -R www-data:www-data storage bootstrap/cache "$(dirname "$database_path")"
 
 runuser -u www-data -- php artisan migrate --force
-runuser -u www-data -- php artisan db:seed --class='Database\Seeders\RenderAdminSeeder' --force
+runuser -u www-data -- php artisan db:seed --class='Database\Seeders\InitialAdminSeeder' --force
 
 exec apache2-foreground

@@ -44,4 +44,17 @@ class AsetImageTest extends TestCase
         $response->assertSee(asset('storage/' . $path), false);
         $this->assertSame($path, $aset->gambar);
     }
+
+    public function test_uploaded_public_image_can_be_served_from_the_storage_route(): void
+    {
+        Storage::fake('public');
+
+        $image = 'test image';
+        Storage::disk('public')->put('aset/asset.png', $image);
+
+        $response = $this->get('/storage/aset/asset.png');
+
+        $response->assertOk();
+        $this->assertSame($image, $response->streamedContent());
+    }
 }

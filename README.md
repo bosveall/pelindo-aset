@@ -61,14 +61,28 @@ Proyek ini menyediakan `render.yaml` dan `Dockerfile` untuk deployment demo:
 1. Masuk atau daftar di Render, lalu buat **Blueprint** dari repository GitHub `bosveall/pelindo-aset`.
 2. Isi environment variable yang diminta Blueprint:
    - `APP_URL`: URL HTTPS aplikasi setelah dibuat, misalnya `https://pelindo-aset-demo.onrender.com`.
-   - `RENDER_ADMIN_NAME` dan `RENDER_ADMIN_EMAIL`: nama dan email admin awal.
-   - `RENDER_ADMIN_PASSWORD`: password kuat minimal 16 karakter.
+   - `INITIAL_ADMIN_NAME` dan `INITIAL_ADMIN_EMAIL`: nama dan email admin awal.
+   - `INITIAL_ADMIN_PASSWORD`: password kuat minimal 16 karakter.
 3. Biarkan Render membuat `APP_KEY` secara otomatis dan tunggu deployment selesai.
 
 Layanan gratis Render dapat tidur saat tidak aktif dan memiliki filesystem sementara. SQLite dan gambar yang diunggah dapat hilang saat layanan restart, tidur, atau deploy ulang. Gunakan deployment ini hanya untuk demo, bukan untuk menyimpan data aset penting.
 
+## Deploy demo eksperimental di Vercel
+
+Vercel tidak menyediakan runtime PHP resmi. Proyek ini menggunakan runtime PHP komunitas, sehingga deployment dapat berubah atau gagal jika runtime tersebut tidak lagi kompatibel.
+
+1. Hubungkan repository `bosveall/pelindo-aset` ke Vercel dan pilih Framework Preset **Other**.
+2. Buat database PostgreSQL di Neon Free. Salin connection string pooled dari dashboard Neon, lalu tambahkan ke project Vercel sebagai `DATABASE_URL` untuk Production dan Preview.
+3. Tambahkan environment variables:
+   - `APP_KEY`: hasil `php artisan key:generate --show` dari komputer lokal.
+   - `APP_URL`: URL HTTPS project, misalnya `https://pelindo-aset-demo.vercel.app`.
+   - `APP_ENV=production`, `APP_DEBUG=false`, `DB_CONNECTION=pgsql`.
+   - `SESSION_DRIVER=cookie`, `CACHE_STORE=array`, `QUEUE_CONNECTION=sync`, `FILESYSTEM_DISK=local`, `LOG_CHANNEL=stderr`.
+   - `INITIAL_ADMIN_NAME`, `INITIAL_ADMIN_EMAIL`, dan `INITIAL_ADMIN_PASSWORD` (minimal 16 karakter).
+4. Deploy branch `main`. Composer menjalankan migrasi, membuat admin hanya jika database belum memiliki pengguna, lalu membangun aset frontend.
+
+Vercel Hobby hanya untuk penggunaan pribadi non-komersial. Neon Free dan filesystem serverless memiliki batasan serta dapat tidur/berhenti saat tidak aktif; unggahan gambar pada Vercel tidak persisten. Gunakan hanya untuk demo magang dengan data contoh, bukan data aset sungguhan.
+
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-# pelindo-aset
-# pelindo-aset

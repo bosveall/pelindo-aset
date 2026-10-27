@@ -6,7 +6,7 @@ use App\Models\User;
 use Illuminate\Database\Seeder;
 use RuntimeException;
 
-class RenderAdminSeeder extends Seeder
+class InitialAdminSeeder extends Seeder
 {
     public function run(): void
     {
@@ -14,13 +14,13 @@ class RenderAdminSeeder extends Seeder
             return;
         }
 
-        $name = getenv('RENDER_ADMIN_NAME') ?: '';
-        $email = getenv('RENDER_ADMIN_EMAIL') ?: '';
-        $password = getenv('RENDER_ADMIN_PASSWORD') ?: '';
+        $name = getenv('INITIAL_ADMIN_NAME') ?: '';
+        $email = getenv('INITIAL_ADMIN_EMAIL') ?: '';
+        $password = getenv('INITIAL_ADMIN_PASSWORD') ?: '';
 
         if ($name === '' || filter_var($email, FILTER_VALIDATE_EMAIL) === false || strlen($password) < 16) {
             throw new RuntimeException(
-                'Set RENDER_ADMIN_NAME, a valid RENDER_ADMIN_EMAIL, and a RENDER_ADMIN_PASSWORD of at least 16 characters.'
+                'Set INITIAL_ADMIN_NAME, a valid INITIAL_ADMIN_EMAIL, and an INITIAL_ADMIN_PASSWORD of at least 16 characters.'
             );
         }
 

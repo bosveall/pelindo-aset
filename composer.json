@@ -50,6 +50,11 @@
             "@php artisan config:clear --ansi",
             "@php artisan test"
         ],
+        "vercel": [
+            "@php artisan migrate --force",
+            "@php artisan db:seed --class=Database\\Seeders\\InitialAdminSeeder --force",
+            "npm run build"
+        ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi"
