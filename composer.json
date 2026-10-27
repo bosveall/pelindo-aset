@@ -52,7 +52,7 @@
         ],
         "vercel": [
             "@php artisan migrate --force",
-            "@php artisan db:seed --class=Database\\Seeders\\InitialAdminSeeder --force",
+            "@php artisan db:seed --class='Database\\Seeders\\InitialAdminSeeder' --force",
             "npm run build"
         ],
         "post-autoload-dump": [
