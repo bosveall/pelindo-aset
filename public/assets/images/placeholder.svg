@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" fill="none">
+  <rect width="400" height="300" fill="#f1f5f9"/>
+  <rect x="1" y="1" width="398" height="298" rx="12" stroke="#e2e8f0" stroke-width="2" fill="none"/>
+  <g stroke="#cbd5e1" stroke-width="2">
+    <line x1="60" y1="150" x2="220" y2="150"/>
+    <line x1="60" y1="150" x2="150" y2="90"/>
+    <line x1="150" y1="90" x2="150" y2="150"/>
+    <line x1="150" y1="90" x2="60" y2="150"/>
+  </g>
+  <text x="200" y="210" text-anchor="middle" font-family="Inter, sans-serif" font-size="16" fill="#94a3b8">Pelindo Aset</text>
+</svg>
