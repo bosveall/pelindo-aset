@@ -3,6 +3,52 @@
 use Illuminate\Support\Str;
 use Pdo\Mysql;
 
+$databaseUrl = env('DB_URL', env('DATABASE_URL'));
+$databaseUrlParts = $databaseUrl ? parse_url($databaseUrl) : false;
+
+if (
+    is_array($databaseUrlParts)
+    && isset($databaseUrlParts['host'])
+    && str_ends_with(strtolower($databaseUrlParts['host']), '.neon.tech')
+) {
+    $endpointId = explode('.', $databaseUrlParts['host'])[0];
+    $endpointId = preg_replace('/-pooler$/', '', $endpointId);
+
+    if (isset($databaseUrlParts['pass'])) {
+        $password = rawurldecode($databaseUrlParts['pass']);
+
+        if (! str_starts_with($password, 'endpoint=')) {
+            $databaseUrlParts['pass'] = rawurlencode("endpoint={$endpointId}\${$password}");
+        }
+    }
+
+    $query = $databaseUrlParts['query'] ?? '';
+
+    if (! preg_match('/(?:^|&)sslmode=/', $query) && ! env('DB_SSLMODE')) {
+        $databaseUrlParts['query'] = ($query ? "{$query}&" : '').'sslmode=verify-full';
+    }
+
+    $databaseUrl = ($databaseUrlParts['scheme'] ?? 'postgresql').'://';
+    if (isset($databaseUrlParts['user'])) {
+        $databaseUrl .= $databaseUrlParts['user'];
+        if (isset($databaseUrlParts['pass'])) {
+            $databaseUrl .= ':'.$databaseUrlParts['pass'];
+        }
+        $databaseUrl .= '@';
+    }
+    $databaseUrl .= $databaseUrlParts['host'];
+    if (isset($databaseUrlParts['port'])) {
+        $databaseUrl .= ':'.$databaseUrlParts['port'];
+    }
+    $databaseUrl .= $databaseUrlParts['path'] ?? '';
+    if (isset($databaseUrlParts['query'])) {
+        $databaseUrl .= '?'.$databaseUrlParts['query'];
+    }
+    if (isset($databaseUrlParts['fragment'])) {
+        $databaseUrl .= '#'.$databaseUrlParts['fragment'];
+    }
+}
+
 return [
 
     /*
@@ -86,7 +132,7 @@ return [
 
         'pgsql' => [
             'driver' => 'pgsql',
-            'url' => env('DB_URL', env('DATABASE_URL')),
+            'url' => $databaseUrl,
             'host' => env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', '5432'),
             'database' => env('DB_DATABASE', 'laravel'),
