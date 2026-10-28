@@ -30,9 +30,27 @@ class RuanganQrTest extends TestCase
         $response->assertOk();
         $response->assertSee('Ruang Rapat');
         $response->assertSee('Ruang Pak GM');
+        $response->assertSee('Lokasi Lain');
         $response->assertSee('data-qr-code=', false);
         $response->assertDontSee('api.qrserver.com');
-        $response->assertDontSee('Lokasi Lain');
+    }
+
+    public function test_room_page_auto_creates_room_for_existing_asset_location(): void
+    {
+        Aset::create([
+            'kode_aset' => 'AST-RUANG-AUTO',
+            'nama' => 'Printer Baru',
+            'lokasi' => 'Ruang Logistik',
+            'kondisi' => 'baik',
+            'status' => 'aktif',
+        ]);
+
+        $this->assertDatabaseMissing('ruangans', ['nama' => 'Ruang Logistik']);
+
+        $response = $this->get(route('ruangan.show', ['lokasi' => 'Ruang Logistik']));
+
+        $response->assertOk();
+        $this->assertDatabaseHas('ruangans', ['nama' => 'Ruang Logistik', 'slug' => 'ruang-logistik']);
     }
 
     public function test_configured_room_qr_can_be_opened_without_assets(): void

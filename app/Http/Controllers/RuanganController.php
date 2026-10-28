@@ -150,6 +150,25 @@ class RuanganController extends Controller
             }
         }
 
+        $existingLocations = Aset::query()
+            ->whereNotNull('lokasi')
+            ->where('lokasi', '<>', '')
+            ->select('lokasi')
+            ->distinct()
+            ->pluck('lokasi')
+            ->all();
+
+        foreach ($existingLocations as $nama) {
+            if (empty(trim((string) $nama))) {
+                continue;
+            }
+
+            Ruangan::firstOrCreate(
+                ['nama' => $nama],
+                ['slug' => Str::slug($nama)]
+            );
+        }
+
         return Ruangan::query()
             ->orderBy('nama')
             ->get()
@@ -181,6 +200,22 @@ class RuanganController extends Controller
         }
 
         if (in_array($normalized, self::DEFAULT_RUANGAN, true)) {
+            return Ruangan::firstOrCreate(
+                ['nama' => $normalized],
+                ['slug' => Str::slug($normalized)]
+            );
+        }
+
+        $hasMatchingAssetLocation = Aset::query()
+            ->whereNotNull('lokasi')
+            ->where('lokasi', '<>', '')
+            ->where(function ($query) use ($normalized) {
+                $query->where('lokasi', $normalized)
+                    ->orWhereRaw('LOWER(lokasi) = ?', [mb_strtolower($normalized)]);
+            })
+            ->exists();
+
+        if ($hasMatchingAssetLocation) {
             return Ruangan::firstOrCreate(
                 ['nama' => $normalized],
                 ['slug' => Str::slug($normalized)]
