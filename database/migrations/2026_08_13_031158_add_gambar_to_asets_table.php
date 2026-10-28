@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::table('asets', function (Blueprint $table) {
             if (!Schema::hasColumn('asets', 'gambar')) {
-                $table->string('gambar')->nullable()->after('deskripsi');
+                $table->string('gambar')->nullable();
             }
         });
     }

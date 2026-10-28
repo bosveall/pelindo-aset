@@ -13,7 +13,7 @@ return new class extends Migration {
 
         Schema::table('pemeliharaans', function (Blueprint $table) {
             $table->dropColumn('biaya');
-            $table->date('jadwal_pemeliharaan')->nullable()->after('tanggal');
+            $table->date('jadwal_pemeliharaan')->nullable();
         });
     }
 
