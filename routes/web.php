@@ -11,7 +11,7 @@ use App\Http\Controllers\RuanganController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return redirect()->route('login');
+    return view('auth.login');
 });
 
 // Auth
@@ -39,6 +39,11 @@ Route::middleware(['auth'])->group(function () {
     // Pemeliharaan - All roles
     Route::resource('pemeliharaans', PemeliharaanController::class);
     Route::get('/qr-ruangan', [RuanganController::class, 'index'])->name('ruangan.index');
+
+    Route::middleware('role:admin')->group(function () {
+        Route::post('/qr-ruangan', [RuanganController::class, 'storeRoom'])->name('ruangan.store');
+        Route::post('/qr-ruangan/{ruangan}', [RuanganController::class, 'update'])->name('ruangan.update');
+    });
 
     // Laporan - All roles
     Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');

@@ -18,6 +18,7 @@ class Aset extends Model
         'merk',
         'lokasi',
         'kondisi',
+        'status',
         'tanggal_pengadaan',
         'deskripsi',
         'gambar',

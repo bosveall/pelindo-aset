@@ -11,6 +11,41 @@
     <p class="text-xs text-slate-500">Pastikan alamat aplikasi dapat diakses dari jaringan HP.</p>
 </div>
 
+@if(auth()->check() && auth()->user()->role === 'admin')
+    <div class="mb-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div class="mb-4 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+                <h2 class="text-lg font-semibold text-slate-800">Kelola nama ruangan</h2>
+                <p class="text-sm text-slate-500">Tambah, ubah, dan atur ruangan yang tampil di QR dan halaman pemeliharaan.</p>
+            </div>
+        </div>
+
+        <form method="POST" action="{{ route('ruangan.store') }}" class="mb-5 grid gap-3 rounded-xl border border-dashed border-slate-300 bg-slate-50 p-3 md:grid-cols-[1fr_1.2fr_auto]">
+            @csrf
+            <input type="text" name="nama" placeholder="Nama ruangan baru" required
+                class="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-100">
+            <textarea name="deskripsi" rows="1" placeholder="Deskripsi ruangan"
+                class="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-100"></textarea>
+            <button type="submit"
+                class="rounded-lg bg-teal-600 px-4 py-2 text-sm font-medium text-white hover:bg-teal-700">Tambah ruangan</button>
+        </form>
+
+        <div class="space-y-3">
+            @foreach($ruangan as $item)
+                <form method="POST" action="{{ route('ruangan.update', ['ruangan' => $item->id]) }}" class="grid gap-3 rounded-xl border border-slate-200 p-3 md:grid-cols-[1fr_1.2fr_auto]">
+                    @csrf
+                    <input type="text" name="nama" value="{{ old('nama', $item->lokasi) }}" required
+                        class="rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-100">
+                    <textarea name="deskripsi" rows="1" placeholder="Deskripsi ruangan"
+                        class="rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-100">{{ old('deskripsi', $item->deskripsi) }}</textarea>
+                    <button type="submit"
+                        class="rounded-lg bg-slate-800 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700">Simpan</button>
+                </form>
+            @endforeach
+        </div>
+    </div>
+@endif
+
 <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
     @forelse($ruangan as $item)
     @php($url = route('ruangan.show', ['lokasi' => $item->lokasi]))
