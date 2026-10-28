@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Aset;
+use App\Models\Ruangan;
 use Illuminate\Http\Request;
 
 class AsetController extends Controller
@@ -35,7 +36,7 @@ class AsetController extends Controller
 
         $asets = $query->withCount('pemeliharaans')->latest()->paginate(10)->withQueryString();
         $kategoriOptions = $this->distinctAssetValues('kategori');
-        $lokasiOptions = $this->distinctAssetValues('lokasi');
+        $lokasiOptions = $this->suggestedLocations();
 
         $namaOptions = $this->distinctAssetValues('nama');
 
@@ -141,8 +142,27 @@ class AsetController extends Controller
             'nama' => $this->distinctAssetValues('nama'),
             'kategori' => $this->distinctAssetValues('kategori'),
             'merk' => $this->distinctAssetValues('merk'),
-            'lokasi' => $this->distinctAssetValues('lokasi'),
+            'lokasi' => $this->suggestedLocations(),
         ];
+    }
+
+    private function suggestedLocations(): array
+    {
+        $locations = $this->distinctAssetValues('lokasi')->all();
+
+        $roomNames = Ruangan::query()
+            ->whereNotNull('nama')
+            ->where('nama', '<>', '')
+            ->orderBy('nama')
+            ->pluck('nama')
+            ->all();
+
+        return collect([...$locations, ...$roomNames])
+            ->filter()
+            ->unique()
+            ->sort()
+            ->values()
+            ->all();
     }
 
     private function distinctAssetValues(string $column)

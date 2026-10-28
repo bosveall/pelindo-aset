@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Aset;
 use App\Models\Pemeliharaan;
+use App\Models\Ruangan;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -48,6 +49,23 @@ class AutomaticSuggestionsTest extends TestCase
             'merk' => 'Merek Baru',
             'lokasi' => 'Lokasi Baru',
         ]);
+    }
+
+    public function test_asset_form_suggests_room_names_even_when_not_used_in_asset_records(): void
+    {
+        $user = User::factory()->create();
+
+        Ruangan::create([
+            'nama' => 'Ruang Server',
+            'slug' => 'ruang-server',
+            'deskripsi' => 'Server utama',
+        ]);
+
+        $this->actingAs($user)
+            ->get(route('asets.create'))
+            ->assertOk()
+            ->assertSee('list="aset-lokasi-options"', false)
+            ->assertSee('<option value="Ruang Server">', false);
     }
 
     public function test_asset_index_can_filter_using_saved_category_and_location(): void
